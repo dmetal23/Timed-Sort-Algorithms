@@ -1,13 +1,14 @@
  /*
 Daniel Rojas
-Math 482 Fall 2015
+Combinatorial Algorithms, Fall 2015
+California State University Northrdige 
  */
  
  
 import java.util.*; 
 
 public abstract class SortingTest { 
-   int[] data; 
+   int[] data; //our data structure where we will store our numbers 
    protected String name; 
    
    protected SortingTest() { 
@@ -19,54 +20,58 @@ public abstract class SortingTest {
 	
    public abstract void sort(); 
 
-   protected boolean isValid(int index) { 
-      return index >= 0 && index < data.length;
+   protected boolean isValid(int index) { //method to check if our position is within bounds of our array.
+      return index >= 0 && index < data.length; //if index is a positive number and it is less than the size of the array, it is valid. 
       
    } 
 	
-   protected void checkedswap(int a, int b) { 
-      int temp = data[a];
+   protected void checkedswap(int a, int b) { //method that checks for valid position between two indexes and performs a swap. 
+      int temp = data[a]; //a temporary position value set to the index of 'a' in our array. 
       if(isValid(a) && isValid(b)) {
-         data[a] = data[b];
-         data[b] = temp; 
+         data[a] = data[b]; //the value at index 'a' is now set to the value at index 'b'. 
+         data[b] = temp;  //the value at index 'b' is now set to the value of our temporary position value. The swap is now complete. 
       }
       else
-         System.out.println("Invalid positions");
+         System.out.println("Invalid positions"); 
    } 
 	
-   protected void uncheckedswap(int a, int b) { 
+   protected void uncheckedswap(int a, int b) { //method that works similarly to checkedswap, only it does not check for valid positions. (Unsafe) 
       int temp = data[a];
       data[a] = data[b];
       data[b] = temp;
    } 
 	
-   protected boolean isSorted(boolean ascending) {
-      if(ascending) { 
-         for(int i=0;i<data.length-1;i++){
-            if (data[i] > data[i+1]) {
-               return false;
+   protected boolean isSorted(boolean ascending) { //method to check if our array is sorted in ascending order. 
+      if(ascending) { //if our array is already in ascending order
+         for(int i=0;i<data.length-1;i++){ //we iterate through the array
+            if (data[i] > data[i+1]) { //if the value at index i is greater than its adjacent value for any of our iterations
+               return false; //then our array must not be sorted
             }
          }
-         return true;
+         return true; //if our iteration check does not return false, the array must be sorted. 
       }
-      else {
-         for(int i=0;i<data.length-1;i++){
-            if (data[i] < data[i+1]) {
-               return false;
+      else { //if our array is not in descending order
+         for(int i=0;i<data.length-1;i++){ //we pretty much do the same thing only check if index i is less than its adjacent index. 
+            if (data[i] < data[i+1]) { //if the value at index i is less than its adjacent value for any of our iterations 
+               return false; //then our array must not be sorted
             }
          }
-         return true;
+         return true;  //if our iteration check does not return false, the array must be sorted. 
       }
    }
    
-   public void generate(int n, int range) { //performs a random permutation on the array
-      data = new int[n];
-      for(int i = 0; i< data.length; i++) {
-         int x = (int)Math.floor(Math.random()*range);
-         data[i] = x;
+   public void generate(int n, int range) { //method that performs a random permutation on the array. n = size of our sample, range = upper bound on our random range of values. 
+      data = new int[n]; //create a new data structure of size n 
+      for(int i = 0; i< data.length; i++) { //for every index in our array
+         int x = (int)Math.floor(Math.random()*range); //we shall generate a random number within our range. 
+         data[i] = x; //then we will set our current index to our random value. 
       }
    } 
 	
+  /***
+  Methods to print our array
+  ***/
+ 
    public String toString() { 
       return toString(0,data.length-1); 
    } 
@@ -87,34 +92,36 @@ public abstract class SortingTest {
       } 
    } 
 	
-   public long timedsort() { 
-      long x = System.currentTimeMillis();
-      sort();
-      long y = System.currentTimeMillis();
-      long xy = y - x;
-      return xy;
+   
+   public long timedsort() { //method that returns the time our sort took to complete. 
+      long x = System.currentTimeMillis(); //check current system time
+      sort(); //perform sort
+      long y = System.currentTimeMillis(); //check our new system time after sort 
+      long xy = y - x; //take away the difference 
+      return xy; //return the difference 
    } 
+   
+   /*************
+   TESTING FUNCTIONS
+   **************/
 
-   public static <T extends SortingTest> void basicSortTest(T s, 
-   int n, int range) { 
-      System.out.println("Basic Sort Test: Sort = " + s.name); 
-      s.generate(n, range); 
-      System.out.println(s); 
-      s.sort(); 
-      System.out.println(s); 
-      System.out.println("Sorted?:" + s.isSorted(true)); 
+   public static <T extends SortingTest> void basicSortTest(T s, int n, int range) { //A basic sorting test using a generic-type 's' input which represents our sorting algorithm.
+      System.out.println("Basic Sort Test: Sort = " + s.name); //first print the sort that we are currently using
+      s.generate(n, range); //generate a random permutation of n numbers for our sort using upper bound range
+      System.out.println(s); //print the current sort
+      s.sort(); //actually sort 
+      System.out.println(s); //print the final sort
+      System.out.println("Sorted?:" + s.isSorted(true)); //check if we have completed our sort. 
       System.out.println(); 
    } 
    
-   public static void doSortingTestTest(SortingTest[] sorters, int n, 
-   int range) { 
+   public static void doSortingTestTest(SortingTest[] sorters, int n, int range) { 
       for (int i=0; i<sorters.length; i++) { 
          basicSortTest(sorters[i],n,range); 
       } 
    } 
    
-   public static <T extends SortingTest> void timedSortTest(T s, 
-   int[] values) { 
+   public static <T extends SortingTest> void timedSortTest(T s, int[] values) { 
       System.out.println("Timed Sort Test: Sort = " + s.name); 
       System.out.println("# of values  Time(ms) Sorted?");
       for (int i=0; i<values.length; i++) { 
@@ -130,10 +137,14 @@ public abstract class SortingTest {
       } 
    }
 	
+   /*****
+   main will act as our driver for now which will run our test cases.
+   *****/
+   
    public static void main(String[] args) {
       SortingTest[] sorters = {new InsertionSort()}; 
-      int[] val = new int[17]; //creating subarray with 2^i number of values where i<=16.
-      for(int i = 0; i< val.length; i++) {
+      int[] val = new int[17]; //creating subarray with 2^i number of values where i<=16. 
+      for(int i = 0; i< val.length; i++) { //we shall fill up our subarray with random values 
          int x = (int)Math.pow(2,i);
          val[i] = x;
       }
@@ -143,6 +154,10 @@ public abstract class SortingTest {
    
    } 
 }
+
+/*****
+SORTING ALGORITHMS
+*****/
 
 class QuickSort extends SortingTest { 
    public QuickSort() { super("QuickSort"); }
